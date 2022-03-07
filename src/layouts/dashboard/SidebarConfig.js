@@ -19,7 +19,7 @@ const sidebarConfig = [
   {
     title: 'events',
     path: '/dashboard/events',
-    icon: getIcon('eva:people-fill')
+    icon: getIcon('eva:swap-outline')
   },
   {
     title: 'product',
