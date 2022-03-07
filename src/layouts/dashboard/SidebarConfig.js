@@ -17,6 +17,11 @@ const sidebarConfig = [
     icon: getIcon('eva:people-fill')
   },
   {
+    title: 'events',
+    path: '/dashboard/events',
+    icon: getIcon('eva:people-fill')
+  },
+  {
     title: 'product',
     path: '/dashboard/products',
     icon: getIcon('eva:shopping-bag-fill')

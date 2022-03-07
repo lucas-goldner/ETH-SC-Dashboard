@@ -10,6 +10,7 @@ import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
 import NotFound from './pages/Page404';
+import Events from './pages/Events';
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +22,7 @@ export default function Router() {
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
+        { path: 'events', element: <Events /> },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }
       ]
