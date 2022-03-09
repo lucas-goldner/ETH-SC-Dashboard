@@ -1,7 +1,8 @@
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import Web3 from 'web3';
 // material
 import {
   Card,
@@ -27,6 +28,7 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
 //
 import EVENTS from '../_mocks_/events';
+import contractAbi from '../contracts/chinesewhiser.json';
 
 // ----------------------------------------------------------------------
 
@@ -126,6 +128,13 @@ export default function Events() {
   const filteredUsers = applySortFilter(EVENTS, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
+
+  useEffect(() => {
+    const web3 = new Web3('https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161');
+    const contractAdress = '0xB7F224fe9227ea920D1C6d9ab154F67003543252';
+    const contract = new web3.eth.Contract(contractAbi, contractAdress);
+    console.log(contract.events);
+  }, []);
 
   return (
     <Page title="User | Minimal-UI">
