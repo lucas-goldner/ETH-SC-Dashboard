@@ -1,0 +1,12 @@
+{
+  "name": "contract_interactor",
+  "version": "1.0.0",
+  "description": "A small app that interacts with a smart contract",
+  "main": "app",
+  "repository": "https://github.com/lucas-goldner/eth-sc-dashboard",
+  "author": "Lucas Goldner",
+  "license": "MIT",
+  "dependencies": {
+    "web3": "^1.7.1"
+  }
+}
