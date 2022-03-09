@@ -10,11 +10,6 @@ const sidebarConfig = [
     title: 'events',
     path: '/dashboard/events',
     icon: getIcon('eva:swap-outline')
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: getIcon('eva:alert-triangle-fill')
   }
 ];
 
