@@ -5,8 +5,12 @@
   "main": "app",
   "repository": "https://github.com/lucas-goldner/eth-sc-dashboard",
   "author": "Lucas Goldner",
+  "type": "module",
   "license": "MIT",
   "dependencies": {
     "web3": "^1.7.1"
+  },
+  "scripts": {
+    "start": "node --experimental-json-modules app.js"
   }
 }
