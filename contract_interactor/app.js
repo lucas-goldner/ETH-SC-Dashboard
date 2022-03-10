@@ -1,5 +1,6 @@
 import Web3 from "web3";
 import contractAbi from "./contracts/chinesewhiser.json";
+import dotenv from "dotenv";
 
 const establischContractConnection = () => {
   //Can be any rpcurl of any network in this case rinkeby will be used
@@ -12,6 +13,9 @@ const establischContractConnection = () => {
 };
 
 const main = () => {
+  dotenv.config();
+  const walletAdress = process.env.WALLET_ADRESS;
+  const privateKey = process.env.PRIVATE_KEY;
   establischContractConnection();
 };
 
