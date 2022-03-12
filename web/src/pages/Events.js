@@ -34,8 +34,7 @@ import contractAbi from '../contracts/chinesewhiser.json';
 
 const TABLE_HEAD = [
   { id: 'owner', label: 'Owner', alignRight: false },
-  { id: 'new_owner', label: 'New Owner', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false }
+  { id: 'new_owner', label: 'New Owner', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -76,6 +75,7 @@ export default function Events() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [querriedEvents, setQuerriedEvents] = useState([]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -92,24 +92,6 @@ export default function Events() {
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -123,17 +105,26 @@ export default function Events() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - EVENTS.length) : 0;
-
-  const filteredUsers = applySortFilter(EVENTS, getComparator(order, orderBy), filterName);
-
-  const isUserNotFound = filteredUsers.length === 0;
-
   useEffect(() => {
+    setQuerriedEvents([]);
     const web3 = new Web3('https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161');
-    const contractAdress = '0xB7F224fe9227ea920D1C6d9ab154F67003543252';
+    const contractAdress = '0x06E0DBE53Dd85c2Ce896B43B227DA65FF679Bc8a';
     const contract = new web3.eth.Contract(contractAbi, contractAdress);
-    console.log(contract.events);
+    contract.getPastEvents(
+      'OwnerSet',
+      {
+        fromBlock: 0
+      },
+      (error, events) => {
+        if (error) {
+          console.log(error.message);
+        } else {
+          events.forEach((item) => {
+            setQuerriedEvents((old) => [item, ...old]);
+          });
+        }
+      }
+    );
   }, []);
 
   return (
@@ -154,12 +145,6 @@ export default function Events() {
         </Stack>
 
         <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filterName}
-            onFilterName={handleFilterByName}
-          />
-
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -167,65 +152,25 @@ export default function Events() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={EVENTS.length}
+                  rowCount={querriedEvents.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                      const isItemSelected = selected.indexOf(name) !== -1;
-
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, name)}
-                            />
-                          </TableCell>
-                          <TableCell align="left">{name}</TableCell>
-                          <TableCell align="left">{name}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              variant="ghost"
-                              color={(status === 'Pending' && 'info') || 'success'}
-                            >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell>
-
-                          <TableCell align="right">
-                            <UserMoreMenu />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isUserNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filterName} />
+                  {querriedEvents.map((querriedEvent, key) => (
+                    <TableRow hover key={key} tabIndex={-1} role="checkbox">
+                      <TableCell padding="checkbox">
+                        <Checkbox />
+                      </TableCell>
+                      <TableCell align="left">{querriedEvent.returnValues.newOwner}</TableCell>
+                      <TableCell align="left">{querriedEvent.returnValues.oldOwner}</TableCell>
+                      <TableCell align="right">
+                        <UserMoreMenu txHash={querriedEvent.transactionHash} />
                       </TableCell>
                     </TableRow>
-                  </TableBody>
-                )}
+                  ))}
+                </TableBody>
               </Table>
             </TableContainer>
           </Scrollbar>
@@ -233,7 +178,7 @@ export default function Events() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={EVENTS.length}
+            count={querriedEvents.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

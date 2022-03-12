@@ -42,7 +42,7 @@ const runChangeOwner = async (
 };
 
 const runGetOwner = async (contract) => {
-  const contractResponse = await contract.methods
+  contract.methods
     .getOwner()
     .call()
     .then((res) => {
@@ -53,12 +53,12 @@ const runGetOwner = async (contract) => {
     });
 };
 
-const runGetWhisper = async (contract) => {
-  const contractResponse = contract.methods
+const runGetWhisper = async (contract, walletAdress) => {
+  contract.methods
     .getWhisper()
-    .call()
+    .call({ from: walletAdress })
     .then((res) => {
-      //console.log(res);
+      console.log(res);
     })
     .catch((err) => {
       console.log(err.message);
@@ -77,7 +77,7 @@ const sendRawTransaction = (web3, txData, walletAdress, privateKey) => {
       .sendSignedTransaction("0x" + serializedTx)
       .on("transactionHash", (txHash) => {
         const transactionHash = txHash;
-        console.log(transactionHash);
+        console.log("Transcation is done at: " + transactionHash);
       });
   });
 };
@@ -97,8 +97,8 @@ const main = (otherAdress, whisper) => {
   //   otherAdress,
   //   whisper
   // );
-  runGetOwner(contract);
-  //runGetWhisper(contract);
+  //runGetOwner(contract);
+  //runGetWhisper(contract, walletAdress);
 };
 
-main("0xC5E7B6AFcfB61FEaEf9d6a973f5487c7C8B742f6", "First Whisper");
+main("0xd71dE4e6609C4Bf20B589DF33b318eAa80A23956", "Second Whisper");
