@@ -3,13 +3,12 @@ import contractAbi from "./contracts/chinesewhiser.json";
 import dotenv from "dotenv";
 import Tx from "ethereumjs-tx";
 
-const establischContractConnection = () => {
+const establischContractConnection = (contractAdress) => {
   //Can be any rpcurl of any network in this case rinkeby will be used
   const rpcUrl =
     "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
   const web3 = new Web3(rpcUrl);
   //Contract needs to be deployed on the chosen network e.g: https://rinkeby.etherscan.io/address/0xb7f224fe9227ea920d1c6d9ab154f67003543252
-  const contractAdress = "0xB7F224fe9227ea920D1C6d9ab154F67003543252";
   const contract = new web3.eth.Contract(contractAbi, contractAdress);
   return { web3, contract };
 };
@@ -17,6 +16,7 @@ const establischContractConnection = () => {
 const runChangeOwner = async (
   web3,
   contract,
+  contractAdress,
   walletAdress,
   privateKey,
   otherAdress,
@@ -32,7 +32,7 @@ const runChangeOwner = async (
     nonce: web3.utils.toHex(nonce),
     gasPrice: "0x3b9aca00",
     from: walletAdress,
-    to: "0xf0A87F2113c2f06F5143D254B94A5D86F44419f3",
+    to: contractAdress,
     value: "0x0",
     gas: "0x61a80",
     data: functionAbi,
@@ -86,10 +86,12 @@ const main = (otherAdress, whisper) => {
   dotenv.config();
   const walletAdress = process.env.WALLET_ADRESS;
   const privateKey = process.env.PRIVATE_KEY;
-  const { web3, contract } = establischContractConnection();
+  const contractAdress = process.env.CONTRACT_ADRESS;
+  const { web3, contract } = establischContractConnection(contractAdress);
   // runChangeOwner(
   //   web3,
   //   contract,
+  //   contractAdress,
   //   walletAdress,
   //   privateKey,
   //   otherAdress,
