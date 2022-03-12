@@ -136,11 +136,14 @@ export default function Events() {
           </Typography>
           <Button
             variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Iconify icon="eva:plus-fill" />}
+            onClick={() =>
+              window.open(
+                'https://rinkeby.etherscan.io/address/0x06e0dbe53dd85c2ce896b43b227da65ff679bc8a'
+              )
+            }
+            startIcon={<Iconify icon="eva:archive-outline" />}
           >
-            New Event
+            View contract
           </Button>
         </Stack>
 
